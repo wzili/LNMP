@@ -1,9 +1,8 @@
 # !/bin/bash
 
-		echo "\n*****************************************************"
-		echo "************* Centos SHELL BY NEMO *************"
-		echo "*****************************************************\n"
-		# --------------------- Provision configuration ---------------------
+		echo "====================================================================================================================="
+		echo "																			************* Centos SHELL BY NEMO *************"
+		echo "====================================================================================================================="
 		
 		# --- PORT settings ---
 		
@@ -17,18 +16,18 @@
 		# --- Application settings ---
 		APP_HOST="localhost"
 		
-		echo "\n*******************************************************"
+		echo "*******************************************************"
 		echo "************** Step 1: Environment Setup **************"
-		echo "*******************************************************\n"
-		echo "\n~~~~~~~~~~~~~~ Enable Required Package Repositories ~~~~~~~~~~~~~~\n"
+		echo "*******************************************************"
+		echo "~~~~~~~~~~~~~~ Enable Required Package Repositories ~~~~~~~~~~~~~~"
 		
 		yum install -y epel-release
 		yum update -y
-		echo "\n~~~~~~~~~~~~~~ Install Nginx, NodeJS, Git, and Wget ~~~~~~~~~~~~~~\n"
+		echo "~~~~~~~~~~~~~~ Install Nginx, NodeJS, Git, and Wget ~~~~~~~~~~~~~~"
 		
 		yum install -y nginx wget git nodejs yum-utils
 		
-		echo "\n~~~~~~~~~~~~~~ Install MySQL ~~~~~~~~~~~~~~\n"
+		echo "~~~~~~~~~~~~~~ Install MySQL ~~~~~~~~~~~~~~"
 		
 		wget https://dev.mysql.com/get/mysql80-community-release-el7-1.noarch.rpm && rpm -ivh mysql80-community-release-el7-1.noarch.rpm
 		yum-config-manager --disable mysql80-community
@@ -36,29 +35,29 @@
 		
 		yum install -y mysql-community-server
 		
-		echo "\n~~~~~~~~~~~~~~ Install PHP ~~~~~~~~~~~~~~\n"
+		echo "~~~~~~~~~~~~~~ Install PHP ~~~~~~~~~~~~~~"
 		
 		wget http://rpms.remirepo.net/enterprise/remi-release-7.rpm && rpm -Uvh remi-release-7.rpm
 		yum-config-manager --enable remi-php71
 		yum update -y
 		yum install -y php-fpm php-cli php-pdo php-mysqlnd php-xml php-soap php-gd php-mbstring php-zip php-intl php-mcrypt php-opcache
 		
-		echo "\n~~~~~~~~~~~~~~ Install Composer ~~~~~~~~~~~~~~\n"
+		echo "~~~~~~~~~~~~~~ Install Composer ~~~~~~~~~~~~~~"
 		
 		php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php
 		php -r "unlink('composer-setup.php');"
 		mv composer.phar /usr/bin/composer
 		
-		echo "\n~~~~~~~~~~~~~~ Enable Installed Services ~~~~~~~~~~~~~~\n"
+		echo "~~~~~~~~~~~~~~ Enable Installed Services ~~~~~~~~~~~~~~"
 		systemctl start mysqld php-fpm nginx 
 		systemctl enable mysqld php-fpm nginx 
 		echo "********************************************************************************"
 		echo "************** Step 2: Pre-installation Environment Configuration **************"
 		echo "********************************************************************************"
-		echo "\n~~~~~~~~~~~~~~ Perform Security Configuration ~~~~~~~~~~~~~~\n"
+		echo "~~~~~~~~~~~~~~ Perform Security Configuration ~~~~~~~~~~~~~~"
 		sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/selinux/config
 		setenforce permissive
-		echo "\n~~~~~~~~~~~~~~ Prepare MySQL Database ~~~~~~~~~~~~~~\n"
+		echo "~~~~~~~~~~~~~~ Prepare MySQL Database ~~~~~~~~~~~~~~"
 		# --- Change the MySQL Server Configuration ---
 		echo "[client]" >> /etc/my.cnf
 		echo "default-character-set = utf8mb4" >> /etc/my.cnf
@@ -81,7 +80,7 @@
 	  mysql -uroot -p$DB_PASSWORD -e "GRANT ALL PRIVILEGES ON $DB_NAME.* to '$DB_USER'@'localhost' identified by '$DB_PASSWORD'"
 	  mysql -uroot -p$DB_PASSWORD -e "FLUSH PRIVILEGES"
 		
-	  echo "\n~~~~~~~~~~~~~~ Configure PHP ~~~~~~~~~~~~~~\n"
+	  echo "~~~~~~~~~~~~~~ Configure PHP ~~~~~~~~~~~~~~"
 		sed -i 's/user = apache/user = nginx/g' /etc/php-fpm.d/www.conf
 		sed -i 's/group = apache/group = nginx/g' /etc/php-fpm.d/www.conf
 		sed -i 's/;catch_workers_output/catch_workers_output/g' /etc/php-fpm.d/www.conf
@@ -94,10 +93,18 @@
 		sed -i 's/opcache.interned_strings_buffer=[0-9]*/opcache.interned_strings_buffer=32/g' /etc/php.d/10-opcache.ini
 		sed -i 's/opcache.max_accelerated_files=[0-9]*/opcache.max_accelerated_files=32531/g' /etc/php.d/10-opcache.ini
 		sed -i 's/;opcache.save_comments=[0-1]/opcache.save_comments=1/g' /etc/php.d/10-opcache.ini
+
+		touch /usr/share/nginx/html/web/index.php
+
+		cat > /usr/share/nginx/html/web/index.php <<____PHPHELLO
+<?PHP
+	echo "Hello Nemo !!!"
+
+____PHPHELLO
 		
 		systemctl restart php-fpm
 
-		echo "\n~~~~~~~~~~~~~~ Configure Web Server ~~~~~~~~~~~~~~\n"
+		echo "~~~~~~~~~~~~~~ Configure Web Server ~~~~~~~~~~~~~~"
 
 		cat > /etc/nginx/conf.d/default.conf <<____NGINXCONFIGTEMPLATE
 server {
@@ -135,7 +142,7 @@ ____NGINXCONFIGTEMPLATE
 		
 		systemctl restart nginx
 
-		echo "\n**********************************************************************************************************************"
+		echo "**********************************************************************************************************************"
 		echo "************** Congratulations! You’ve Successfully **********************************"
-		echo "**********************************************************************************************************************\n"
-		echo "\n************** Now! Open the homepage http://$APP_HOST/ . **************\n"
+		echo "**********************************************************************************************************************"
+		echo "************** Now! Open the homepage http://$APP_HOST/ . **************"
