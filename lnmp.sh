@@ -1,8 +1,8 @@
 # !/bin/bash
 
-		echo "====================================================================================================================="
-		echo "																			************* Centos SHELL BY NEMO *************"
-		echo "====================================================================================================================="
+		echo "==============================================================================\n"
+		echo "                ************* Centos SHELL BY NEMO *************              \n"
+		echo "==============================================================================\n"
 		
 		# --- PORT settings ---
 		
@@ -94,6 +94,8 @@
 		sed -i 's/opcache.max_accelerated_files=[0-9]*/opcache.max_accelerated_files=32531/g' /etc/php.d/10-opcache.ini
 		sed -i 's/;opcache.save_comments=[0-1]/opcache.save_comments=1/g' /etc/php.d/10-opcache.ini
 
+		mkdir -p /usr/share/nginx/html/web/
+
 		touch /usr/share/nginx/html/web/index.php
 
 		cat > /usr/share/nginx/html/web/index.php <<____PHPHELLO
@@ -117,7 +119,7 @@ server {
 	gzip_vary on;
 	location / {
 		# try to serve file directly, fallback to index.php
-		try_files \\$uri /index.php\\$is_args\\$args;
+		try_files $uri /index.php$is_args$args;
 	}
 	location ~ ^/(index|index_dev|config|install)\\.php(/|$) {
 		fastcgi_pass 127.0.0.1:9000;
@@ -125,7 +127,7 @@ server {
 		# fastcgi_pass unix:/var/run/php/php7-fpm.sock;
 		fastcgi_split_path_info ^(.+\\.php)(/.*)$;
 		include fastcgi_params;
-		fastcgi_param SCRIPT_FILENAME \\$document_root\\$fastcgi_script_name;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 		fastcgi_param HTTPS off;
 		fastcgi_buffers 64 64k;
 		fastcgi_buffer_size 128k;
