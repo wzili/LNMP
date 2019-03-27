@@ -6,7 +6,7 @@
 		
 		# --- PORT settings ---
 		
-		FORWARDED_PORT=80
+		FORWARDED_PORT=8080
 		
 		# --- Database settings ---
 		DB_USER="nemo"
@@ -100,7 +100,7 @@
 
 		cat > /usr/share/nginx/html/web/index.php <<____PHPHELLO
 <?PHP
-	echo "Hello Nemo !!!"
+	echo "Hello Nemo !!!";
 
 ____PHPHELLO
 		
@@ -110,6 +110,7 @@ ____PHPHELLO
 
 		cat > /etc/nginx/conf.d/default.conf <<____NGINXCONFIGTEMPLATE
 server {
+	listen $FORWARDED_PORT;
 	server_name $APP_HOST www.$APP_HOST;
 	root  /usr/share/nginx/html/web;
 	index index.php;
@@ -147,4 +148,4 @@ ____NGINXCONFIGTEMPLATE
 		echo "**********************************************************************************************************************"
 		echo "************** Congratulations! You’ve Successfully **********************************"
 		echo "**********************************************************************************************************************"
-		echo "************** Now! Open the homepage http://$APP_HOST/ . **************"
+		echo "************** Now! Open the homepage http://$APP_HOST:$FORWARDED_PORT/ . **************"
