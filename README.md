@@ -2,7 +2,7 @@
 > Nginx, Mysql, PHP, NodeJS, Git, Composer
 ## USE
 ```
-git clone lnmp
+git clone https://github.com/wzili/LNMP.git lnmp
 
 cd lnmp && sh lnmp.sh
 ```
